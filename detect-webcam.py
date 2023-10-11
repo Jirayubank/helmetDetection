@@ -30,8 +30,8 @@ def main():
         ]
 
         # control Arduino
-        # if detections.class_id.size > 0:
-        #     arduino(detections.class_id)
+        if detections.class_id.size > 0:
+            arduino(detections.class_id)
 
         frame = box_annotator.annotate(
             scene=frame,
