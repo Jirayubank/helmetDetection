@@ -18,7 +18,7 @@ check your arduino com-port before running with arduino (ie. 'COM3' 'dev/tty')
 [Dataset (Roboflow)](https://app.roboflow.com/bvoqueworkspace/helmet-wearing-detection-7yx0s/1)  
 
 **Train Validation (Roboflow Notebook)**  
-[Training Notebook](https://colab.research.google.com/github/roboflow-ai/notebooks/blob/main/notebooks/train-yolov8-object-detection-on-custom-dataset.ipynb)  
+[Training Notebook](https://github.com/Jirayubank/helmetDetectionNotebook)  
 
 **Other Document to read**  
 [Yolov8 Docs](https://docs.ultralytics.com/)  
