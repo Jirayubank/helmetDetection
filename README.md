@@ -1,4 +1,4 @@
-<img src="https://github.com/Jirayubank/helmetDetection/blob/main/helmet-detection-flowchart_2310.png" alt="banner" height="500"/>
+![banner](https://github.com/Jirayubank/helmetDetection/blob/main/helmet-detection-flowchart_2310.png)
 
 # helmetDetection
 [YOLOv8](https://github.com/ultralytics/ultralytics) powered Helmet Wearing Detection Project
