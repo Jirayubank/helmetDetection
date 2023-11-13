@@ -3,6 +3,10 @@ from ultralytics import YOLO
 import supervision as sv
 import serial
 import numpy
+import threading
+import subprocess
+
+# port = serial.Serial('COM8', 9600)
 
 
 def main():
@@ -12,40 +16,58 @@ def main():
         text_scale=0.5
     )
 
+    color = sv.ColorPalette.default()
+    zone_in = numpy.array([[500, 50],
+                           [500, 400],
+                           [100, 400],
+                           [100, 50]])
     # load model
-    # model = YOLO("yolov8s-5.10ver1.pt")   # yolo
-    model = YOLO('yolov8s-ver1.onnx', task='detect')   # onnx (run faster than yolo on cpu)
+    model = YOLO('../helmet-detect/yolov8s-ver3-0111.onnx', task='detect')   # onnx (run faster than yolo on cpu) ver2
+    source = 'rtsp://admin:tatc1234@192.168.1.64:554/Streaming/Channels/102'    # TODO: connect with ip cam
     img_size = 416
 
-    for result in model.predict(source=0, show=False, stream=True, imgsz=(img_size, img_size), agnostic_nms=True,
-                                conf=0.5):
+    # vid = '../test/detect_demo.mp4'
+    # img = '../test/BikesHelmets76.png'
 
-        frame = result.orig_img
-        detections = sv.Detections.from_ultralytics(result)
+    for results in model.predict(source=source, show=False, stream=True, save_txt=False,
+                                 imgsz=(img_size, img_size), agnostic_nms=True, conf=0.5):
+
+        frames = results.orig_img
+        zone = sv.PolygonZone(zone_in, (img_size, img_size))
+        detections = sv.Detections.from_ultralytics(results)
+        mask = zone.trigger(detections=detections)
+        detections = detections[mask]
 
         labels = [
-            f"{result.names[class_id]} {confidence * 100:0.2f}"
+            f"{results.names[class_id]} {confidence * 100:0.2f}"
             for _, _, confidence, class_id, tracker_id
             in detections
         ]
 
-        # control Arduino
+        args = numpy.ndarray([])
         if detections.class_id.size > 0:
-            arduino(detections.class_id)
+            args = detections.class_id
+        elif detections.class_id.size == 0:
+            args = numpy.ndarray([0])
+        if args.size != 0:
+            a = threading.Thread(target=arduino, args=args)
+            a.start()
 
         frame = box_annotator.annotate(
-            scene=frame,
+            scene=frames,
             detections=detections,
             labels=labels
         )
-
-        cv2.imshow("Detection", frame)
+        sv.draw_polygon(frame, zone_in, color.colors[1])
+        cv2.namedWindow('Detection', cv2.WINDOW_KEEPRATIO)
+        cv2.imshow('Detection', frame)
+        cv2.resizeWindow('Detection', 1200, 720)
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
 
-def Decision(class_id: list, threshold: float) -> int:
+def Decision(class_id: numpy.ndarray, threshold: float) -> int:
     decision = numpy.average(class_id)
     if decision >= threshold:
         decision = 1
@@ -54,19 +76,33 @@ def Decision(class_id: list, threshold: float) -> int:
     return decision
 
 
-def arduino(class_id: list, threshold=0.6) -> None:
-    port = serial.Serial('COM3', 9600)
+def arduino(class_id: numpy.ndarray, threshold=0.6) -> None:
+    # port = serial.Serial('COM4', 9600)
     decision = Decision(class_id=class_id, threshold=threshold)
     while True:
         if decision == 1:
-            if port.write(b'1'):
-                print("LED off")
-                break
+            port.write(b'1')
+            break
         elif decision == 0:
-            if port.write(b'0'):
-                print("LED on")
-                break
+            port.write(b'0')
+            break
+
+
+def mqtt_pub(topic: str, value: str) -> None:
+    subprocess.run(['mosquitto_pub', '-t', topic, '-m', value])
+
+
+def runMqtt(class_id: numpy.ndarray) -> None:
+    decision = Decision(class_id=class_id, threshold=0.6)
+    if decision:
+        t = threading.Thread(target=mqtt_pub, args=('/py', 'on'))
+        t.start()
+    elif not decision:
+        t = threading.Thread(target=mqtt_pub, args=('/py', 'off'))
+        t.start()
+    return
 
 
 if __name__ == "__main__":
-    main()
+    m = threading.Thread(target=main)
+    m.start()
