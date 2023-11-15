@@ -6,7 +6,7 @@ import numpy
 import threading
 import subprocess
 
-# port = serial.Serial('COM8', 9600)
+port = serial.Serial('COM8', 9600)
 
 
 def main():
@@ -23,17 +23,21 @@ def main():
                            [100, 50]])
     # load model
     model = YOLO('../helmet-detect/yolov8s-ver3-0111.onnx', task='detect')   # onnx (run faster than yolo on cpu) ver2
-    source = 'rtsp://admin:tatc1234@192.168.1.64:554/Streaming/Channels/102'    # TODO: connect with ip cam
+    source = 'rtsp'    # TODO: connect with ip cam
     img_size = 416
 
     # vid = '../test/detect_demo.mp4'
     # img = '../test/BikesHelmets76.png'
 
-    for results in model.predict(source=source, show=False, stream=True, save_txt=False,
-                                 imgsz=(img_size, img_size), agnostic_nms=True, conf=0.5):
+    for results in model.predict(source=source,
+                                 show=False,
+                                 stream=True,
+                                 imgsz=(img_size, img_size),
+                                 agnostic_nms=True,
+                                 conf=0.5):
 
         frames = results.orig_img
-        zone = sv.PolygonZone(zone_in, (img_size, img_size))
+        zone = sv.PolygonZone(zone_in, (1600, 800))
         detections = sv.Detections.from_ultralytics(results)
         mask = zone.trigger(detections=detections)
         detections = detections[mask]
@@ -59,9 +63,7 @@ def main():
             labels=labels
         )
         sv.draw_polygon(frame, zone_in, color.colors[1])
-        cv2.namedWindow('Detection', cv2.WINDOW_KEEPRATIO)
         cv2.imshow('Detection', frame)
-        cv2.resizeWindow('Detection', 1200, 720)
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
@@ -86,21 +88,6 @@ def arduino(class_id: numpy.ndarray, threshold=0.6) -> None:
         elif decision == 0:
             port.write(b'0')
             break
-
-
-def mqtt_pub(topic: str, value: str) -> None:
-    subprocess.run(['mosquitto_pub', '-t', topic, '-m', value])
-
-
-def runMqtt(class_id: numpy.ndarray) -> None:
-    decision = Decision(class_id=class_id, threshold=0.6)
-    if decision:
-        t = threading.Thread(target=mqtt_pub, args=('/py', 'on'))
-        t.start()
-    elif not decision:
-        t = threading.Thread(target=mqtt_pub, args=('/py', 'off'))
-        t.start()
-    return
 
 
 if __name__ == "__main__":
