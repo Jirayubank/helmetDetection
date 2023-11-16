@@ -13,7 +13,7 @@ conda create -n YOUR_ENV_NAME
 When finished create env then install the requirements library
 
 ```curl
-pip install "requirements.text"
+pip install "requirements.txt"
 ```
 
 when The installation has done move on to the inference
