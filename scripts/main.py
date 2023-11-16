@@ -4,8 +4,8 @@ import helmetDetection
 
 def main():
     model = 'YOLOv8s-ver4-1611.onnx'
-    com_port = 'COM8'
-    source = 'rtsp://admin:tatc1234@192.168.1.64:554/Streaming/Channels/101'
+    com_port = 'com port of arduino (check devmgmt.msc)'
+    source = 'your input source'
     helmet = helmetDetection.HelmetDetection(path_model=model,
                                              com_port=com_port,
                                              source=source
