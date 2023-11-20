@@ -2,7 +2,6 @@ import serial
 from ultralytics import YOLO
 import supervision as sv
 import numpy
-import serial
 import threading
 import cv2
 
