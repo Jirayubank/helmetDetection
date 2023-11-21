@@ -3,7 +3,7 @@
 
 Hook up arduino, python and AI object Detection together the form an AI security system
 
-Go to [main](https://github.com/jirayubank/helmetDetection/scripts) for main program
+Go to [main](https://github.com/Jirayubank/helmetDetection/tree/main/scripts) for main program
 
 **Dataset**  
 [Dataset (Roboflow)](https://app.roboflow.com/bvoqueworkspace/helmet-wearing-detection-7yx0s/1)  
