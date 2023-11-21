@@ -1,6 +1,4 @@
-ultralytics~=8.0.196
-opencv-contrib-python
-supervision~=0.15.0
-pyserial~=3.5
-numpy~=1.26.0
-opencv-python~=4.8.1.78
+numpy==1.26.0
+supervision==0.15.0
+ultralytics==8.0.196
+opencv-python==4.8.1.78
