@@ -6,7 +6,7 @@ Hook up arduino, python and AI object Detection together the form an AI security
 Go to [main](https://github.com/Jirayubank/helmetDetection/tree/main/scripts) for main program
 
 **Dataset**  
-[Dataset (Roboflow)](https://app.roboflow.com/bvoqueworkspace/helmet-wearing-detection-7yx0s/1)  
+[Dataset (Roboflow)](https://universe.roboflow.com/bvoqueworkspace/helmet-wearing-detection-7yx0s/dataset)  
 
 **Train Validation (Roboflow Notebook)**  
 [Training Notebook](https://github.com/Jirayubank/helmetDetectionNotebook)  
