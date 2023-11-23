@@ -138,8 +138,8 @@ class HelmetDetection:
             # self.cli.disconnect()
         return
 
-    @classmethod
-    def decision(cls, class_id: numpy.ndarray, threshold: float):
+    @staticmethod
+    def decision(class_id: numpy.ndarray, threshold: float):
         decision = numpy.average(class_id)
         if decision >= threshold:
             decision = 1
