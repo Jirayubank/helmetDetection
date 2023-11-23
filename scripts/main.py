@@ -8,10 +8,10 @@ def main():
     source = 0
     helmet = HelmetDetection(
         path_model=model,
-        com_port=com_port,
         source=source,
         is_serial=False,
-        is_mqtt=False
+        is_mqtt=False,
+        com_port=com_port
     )
     helmet.detectionRun()
 
