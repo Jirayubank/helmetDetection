@@ -9,7 +9,7 @@ import paho.mqtt.client as mqtt
 
 
 class HelmetDetection:
-    def __init__(self, path_model: str, com_port: str, source, is_mqtt: bool, is_serial: bool):
+    def __init__(self, path_model: str, source, is_mqtt: bool, is_serial: bool, com_port=None):
         self.model = YOLO(path_model, task='detect')
         self.isSerial = is_serial
         self.isMqtt = is_mqtt
@@ -17,7 +17,7 @@ class HelmetDetection:
         self.img_size = 416
         self.color = sv.Color.from_hex('#17e87f')
 
-        if self.isSerial:
+        if self.isSerial and com_port is not None:
             self.port = serial.Serial(com_port, 9600)
 
         if self.isMqtt:
