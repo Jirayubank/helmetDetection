@@ -3,9 +3,8 @@ from helmetDetection import HelmetDetection
 
 
 def main():
-    model = 'YOLOv8s-ver6-2111.onnx'
-    com_port = 'COM8'
-    # source = 'rtsp://admin:tatc1234@192.168.1.64:554/Streaming/Channels/101'
+    model = 'modelPath'
+    com_port = 'comPort'
     source = 0
     helmet = HelmetDetection(
         path_model=model,
