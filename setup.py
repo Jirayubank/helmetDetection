@@ -12,7 +12,7 @@ setup(
         'opencv-python==4.8.1.78',
         'paho-mqtt==1.6.1'
     ],
-    python_requires='3.11.5',
+    python_requires='>=3.11.5',
     url='https://github.com/Jirayubank/helmetDetection',
     license='',
     author='BankkV',
