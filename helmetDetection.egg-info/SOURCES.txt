@@ -1,7 +1,0 @@
-README.md
-setup.py
-helmetDetection.egg-info/PKG-INFO
-helmetDetection.egg-info/SOURCES.txt
-helmetDetection.egg-info/dependency_links.txt
-helmetDetection.egg-info/requires.txt
-helmetDetection.egg-info/top_level.txt
