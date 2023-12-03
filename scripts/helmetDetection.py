@@ -65,7 +65,7 @@ class HelmetDetection:
             self.cli = mqtt.Client()
             self.cli.connect("localhost", 1883, 60)
 
-        if type(self.source) != int:
+        if not isinstance(self.source, int):
             self.w = 1600
             self.h = 800
         else:
