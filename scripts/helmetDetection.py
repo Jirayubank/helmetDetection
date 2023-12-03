@@ -47,6 +47,8 @@ class HelmetDetection:
         based on detection results.
     """
 
+    # TODO: segmentation mode
+
     def __init__(self, path_model: str, source, is_mqtt: bool, is_serial: bool, com_port=None, rect_wh=300) -> None:
         self.model = YOLO(path_model, task='detect')
         self.isSerial = is_serial
@@ -66,11 +68,9 @@ class HelmetDetection:
         if type(self.source) != int:
             self.w = 1600
             self.h = 800
-
         else:
             self.w = 640
             self.h = 480
-
         center_x = self.w / 2
         center_y = self.h / 2
         self.zone_in = numpy.array([
@@ -115,7 +115,7 @@ class HelmetDetection:
                     a = threading.Thread(target=self.arduino(args))
                     a.start()
                 if self.isMqtt:
-                    mq = threading.Thread(target=self.mqttPaho(args))
+                    mq = threading.Thread(target=self.mqttPaho, args=args)
                     mq.start()
 
             self.interface(
@@ -159,7 +159,7 @@ class HelmetDetection:
 
         cv2.imshow('Detection', frame)
 
-    def arduino(self, class_id: numpy.ndarray, threshold=0.6):
+    def arduino(self, class_id, threshold=0.6):
         decision = self.decision(class_id=class_id, threshold=threshold)
         while True:
             if decision:
@@ -170,19 +170,12 @@ class HelmetDetection:
                 break
 
     def mqttPaho(self, class_id: numpy.ndarray, threshold=0.6):
-        decision = self.decision(class_id=class_id, threshold=threshold)
-        if decision:
+        if self.decision(class_id=class_id, threshold=threshold):
             self.cli.publish("/py", "on")
-        elif not decision:
+        else:
             self.cli.publish("/py", "off")
-            # self.cli.disconnect()
         return
 
     @staticmethod
-    def decision(class_id: numpy.ndarray, threshold: float):
-        decision = numpy.average(class_id)
-        if decision >= threshold:
-            decision = 1
-        else:
-            decision = 0
-        return decision
+    def decision(class_id: numpy.ndarray, threshold: float) -> int:
+        return 1 if numpy.average(class_id) >= threshold else 0

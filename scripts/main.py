@@ -3,14 +3,14 @@ from helmetDetection import HelmetDetection
 
 
 def main():
-    model = 'modelPath'
-    com_port = 'comPort'
+    model = 'YOLOv8s-ver6-2111.onnx'
+    com_port = 'COM3'
     source = 0
     helmet = HelmetDetection(
         path_model=model,
         source=source,
-        is_serial=False,
-        is_mqtt=False,
+        is_serial=True,
+        is_mqtt=True,
         com_port=com_port,
         rect_wh=300
     )
