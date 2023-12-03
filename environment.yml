@@ -4,8 +4,11 @@ channels:
 dependencies:
   - pyserial=3.5
   - numpy=1.26.0
-  - supervision=0.15.0
-  - ultralytics=8.0.196
-  - opencv-python=4.8.1.78
-  - paho-mqtt=1.6.1
-  - python>=3.11.5
+  - pip=23.3.1
+  - setuptools=68.0.0
+  - python=3.11.5
+  - pip:
+      - supervision==0.15.0
+      - ultralytics==8.0.196
+      - opencv-python==4.8.1.78
+      - paho-mqtt==1.6.1
