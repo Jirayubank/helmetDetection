@@ -1,0 +1,8 @@
+Metadata-Version: 2.1
+Name: helmetDetection
+Version: 1
+Summary: Helmet-Wearing Detection with Deep Learning usage YOLOv8
+Home-page: https://github.com/Jirayubank/helmetDetection
+Author: BankkV
+Author-email: jirayubank10@gmail.com
+Keywords: YOLOv8,deep learning,computer vision
