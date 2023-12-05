@@ -27,6 +27,7 @@ class HelmetDetection:
         isMqtt (bool): Flag indicating whether MQTT is enabled.
         source: Image source for detection.
         img_size (int): Size of the input image for detection.
+        rect_wh (int): Width and height of the rectangular detection zone.
         color (str): Color for visualizations.
         port (str): Serial port instance if `is_serial` is True.
         cli: MQTT Client instance if `is_mqtt` is True.
@@ -40,13 +41,13 @@ class HelmetDetection:
         arduino(class_id, threshold): Communicate with Arduino based on detection results.
         mqttPaho(class_id, threshold): Publish MQTT messages based on detection results.
         decision(class_id, threshold): Make a decision based on the average confidence of detected classes.
+        setColor(hex_color): Set color based on a hexadecimal color code.
 
     Note:
         The `detectionRun` method continuously performs helmet detection and updates the interface
         with real-time information. It also communicates with Arduino and/or publishes MQTT messages
         based on detection results.
     """
-
     # TODO: segmentation mode
 
     def __init__(self, path_model: str, source, is_mqtt: bool, is_serial: bool, com_port=None, rect_wh=300) -> None:
@@ -55,7 +56,6 @@ class HelmetDetection:
         self.isMqtt = is_mqtt
         self.source = source
         self.img_size = 416
-        self.color = sv.Color.from_hex('#17e87f')
         self.rect_wh = rect_wh
 
         if self.isSerial and com_port is not None:
@@ -139,21 +139,26 @@ class HelmetDetection:
             detections=detections,
             labels=labels
         )
-        sv.draw_polygon(frame, self.zone_in, self.color)
+        sv.draw_polygon(frame, self.zone_in, self.setColor('17e87f'))
         if self.decision(args, 0.6) == 0:
             msg = "Please Wear Helmet!!!"
         elif self.decision(args, 0.6) == 1:
             msg = "Good to go!!!"
         else:
             msg = "For you safety ride"
+        msg_x = int(self.w / 2)
+        msg_y = int(self.h * 0.125)
+        fps_x = int(self.w / 10)
+        fps_y = int(self.h * 0.025)
+
         sv.draw_text(frame, text=f"{int(fps)}/30fps",
-                     text_anchor=sv.Point(x=80, y=20),
-                     text_color=self.color,
+                     text_anchor=sv.Point(x=fps_x, y=fps_y),
+                     text_color=self.setColor('7c2de2'),
                      text_scale=0.7,
                      text_thickness=2)
         sv.draw_text(frame, text=f"{msg}",
-                     text_anchor=sv.Point(x=800, y=100),
-                     text_color=self.color,
+                     text_anchor=sv.Point(x=msg_x, y=msg_y),
+                     text_color=self.setColor('ef709b'),
                      text_scale=1,
                      text_thickness=2)
 
@@ -175,6 +180,11 @@ class HelmetDetection:
         else:
             self.cli.publish("/py", "off")
         return
+
+    @staticmethod
+    def setColor(hex_color: str):
+        color = sv.Color.from_hex(hex_color)
+        return color
 
     @staticmethod
     def decision(class_id: numpy.ndarray, threshold: float) -> int:
