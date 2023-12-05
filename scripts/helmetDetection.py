@@ -134,11 +134,13 @@ class HelmetDetection:
             text_thickness=1,
             text_scale=0.5
         )
+
         frame = box_annotator.annotate(
             scene=frames,
             detections=detections,
             labels=labels
         )
+
         sv.draw_polygon(frame, self.zone_in, self.setColor('17e87f'))
         if self.decision(args, 0.6) == 0:
             msg = "Please Wear Helmet!!!"
@@ -146,6 +148,7 @@ class HelmetDetection:
             msg = "Good to go!!!"
         else:
             msg = "For you safety ride"
+
         msg_x = int(self.w / 2)
         msg_y = int(self.h * 0.125)
         fps_x = int(self.w / 10)
@@ -183,8 +186,7 @@ class HelmetDetection:
 
     @staticmethod
     def setColor(hex_color: str):
-        color = sv.Color.from_hex(hex_color)
-        return color
+        return sv.Color.from_hex(hex_color)
 
     @staticmethod
     def decision(class_id: numpy.ndarray, threshold: float) -> int:
