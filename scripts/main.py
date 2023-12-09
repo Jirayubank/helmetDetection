@@ -9,7 +9,7 @@ def main():
     helmet = HelmetDetection(
         path_model=model,
         source=source,
-        is_serial=False,
+        is_serial=True,
         is_mqtt=False,
         com_port=com_port,
         rect_wh=300

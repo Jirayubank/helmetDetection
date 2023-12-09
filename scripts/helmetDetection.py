@@ -48,7 +48,6 @@ class HelmetDetection:
         with real-time information. It also communicates with Arduino and/or publishes MQTT messages
         based on detection results.
     """
-    # TODO: segmentation mode
 
     def __init__(self, path_model: str, source, is_mqtt: bool, is_serial: bool, com_port=None, rect_wh=300) -> None:
         self.model = YOLO(path_model, task='detect')
@@ -80,6 +79,11 @@ class HelmetDetection:
             [(center_x + (self.rect_wh / 2)), (center_y - (self.rect_wh / 2))]
         ])
         self.zone_in = self.zone_in.astype(int)
+        self.decision_map = {
+            0: "off",
+            1: "on",
+            2: "no detection"
+        }
 
     def detectionRun(self):
         for results in self.model.predict(
@@ -104,31 +108,30 @@ class HelmetDetection:
                 for _, _, confidence, class_id, _
                 in detections
             ]
-            args = numpy.ndarray([])
-            if detections.class_id.size > 0:
-                args = detections.class_id
-            elif detections.class_id.size == 0:
-                args = numpy.ndarray([0])
 
-            if args.size != 0:
-                if self.isSerial:
-                    a = threading.Thread(target=self.arduino(args))
-                    a.start()
-                if self.isMqtt:
-                    mq = threading.Thread(target=self.mqttPaho, args=args)
-                    mq.start()
+            if detections.class_id.size > 0:
+                decision = self.decision(detections.class_id, 0.6)
+            else:
+                decision = 2    # No detection mode
+
+            if self.isSerial:
+                a = threading.Thread(target=self.arduino(decision))
+                a.start()
+            if self.isMqtt:
+                mq = threading.Thread(target=self.mqttPaho(decision))
+                mq.start()
 
             self.interface(
                 frames=frames,
                 detections=detections,
                 labels=labels,
-                args=args,
+                decision=decision,
                 fps=fps
             )
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
 
-    def interface(self, frames, detections, labels, args, fps):
+    def interface(self, frames, detections, labels, decision, fps):
         box_annotator = sv.BoxAnnotator(
             thickness=2,
             text_thickness=1,
@@ -142,12 +145,14 @@ class HelmetDetection:
         )
 
         sv.draw_polygon(frame, self.zone_in, self.setColor('17e87f'))
-        if self.decision(args, 0.6) == 0:
+        if decision == 0:
             msg = "Please Wear Helmet!!!"
-        elif self.decision(args, 0.6) == 1:
+        elif decision == 1:
             msg = "Good to go!!!"
-        else:
+        elif decision == 2:
             msg = "For you safety ride"
+        else:
+            msg = ""    # default return
 
         msg_x = int(self.w / 2)
         msg_y = int(self.h * 0.125)
@@ -167,22 +172,15 @@ class HelmetDetection:
 
         cv2.imshow('Detection', frame)
 
-    def arduino(self, class_id, threshold=0.6):
-        decision = self.decision(class_id=class_id, threshold=threshold)
+    def arduino(self, decision: int):
         while True:
-            if decision:
-                self.port.write(b'1')
-                break
-            elif not decision:
-                self.port.write(b'0')
+            if decision in self.decision_map.keys():
+                self.port.write(bytes(eval(f"b'{decision}'")))
                 break
 
-    def mqttPaho(self, class_id: numpy.ndarray, threshold=0.6):
-        if self.decision(class_id=class_id, threshold=threshold):
-            self.cli.publish("/py", "on")
-        else:
-            self.cli.publish("/py", "off")
-        return
+    def mqttPaho(self, decision: int):
+        if decision in self.decision_map:
+            self.cli.publish("/py", self.decision_map[decision])
 
     @staticmethod
     def setColor(hex_color: str):
