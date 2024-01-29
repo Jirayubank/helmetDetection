@@ -188,8 +188,8 @@ class HelmetDetection:
 
     def mqttInit(self):
         self.cli.tls_set(tls_version=mqtt.ssl.PROTOCOL_TLS)
-        self.cli.username_pw_set('bankkv', password='BankkV_101')
-        self.cli.connect("332e2cc4c8f849d68aa76af63c38bf5c.s2.eu.hivemq.cloud", 8883)
+        self.cli.username_pw_set('user', password='password')
+        self.cli.connect("host", 8883)
 
     def mqttPublish(self, decision: int):
         if decision in self.decision_map:
