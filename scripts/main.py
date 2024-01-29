@@ -1,18 +1,30 @@
+import argparse
 import threading
 from helmetDetection import HelmetDetection
 
+parser = argparse.ArgumentParser()
+parser.add_argument('-path', '--model', required=True,
+                    help="Path of YOLOv8 model")
+parser.add_argument('-s', '--source', required=True,
+                    help="Detection source")
+parser.add_argument('-isArduino', '--is_serial', required=False,
+                    help="Enable serial communication", default=False)
+parser.add_argument('-isMqtt', '--is_mqtt', required=False,
+                    help="Enable mqtt communication", default=False)
+parser.add_argument('-comPort', '--com_port', required=False,
+                    help="required if isArduino is Enable", default='COM8')
+
+args = parser.parse_args()
+
 
 def main():
-    model = 'YOLOv8s-ver6-2111.onnx'
-    com_port = 'COM3'
-    source = 0
     helmet = HelmetDetection(
-        path_model=model,
-        source=source,
-        is_serial=True,
-        is_mqtt=False,
-        com_port=com_port,
-        rect_wh=300
+        path_model=args.model,
+        source=args.source,
+        is_serial=args.is_serial,
+        is_mqtt=args.is_mqtt,
+        com_port=args.com_port,
+        rect_wh=500
     )
     helmet.detectionRun()
 
