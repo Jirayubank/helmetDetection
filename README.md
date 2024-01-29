@@ -7,7 +7,7 @@ Welcome to the **helmetDetection** repository – a project leveraging YOLOv8 fo
 1. Head to the `scripts` directory for the primary program.
 2. Explore the `Dataset` from [Roboflow](https://universe.roboflow.com/bvoqueworkspace/helmet-wearing-detection-7yx0s/dataset).
 3. Check out the [Training Notebook](https://github.com/Jirayubank/helmetDetectionNotebook) for insights into the training process.
-4. The *helmetDetection* Yolov8 model also available in [HERE](https://drive.google.com/drive/folders/1NDHVuc2cKWMQyXLmUPFTccJrD-3BKKOs?usp=sharing).
+4. The *helmetDetection* Yolov8 model also available in `scripts`.
 
 ## Project Components
 
