@@ -50,7 +50,19 @@ class HelmetDetection:
         based on detection results.
     """
 
-    def __init__(self, path_model: str, source, is_mqtt=False, is_serial=False, com_port=None, rect_wh=300) -> None:
+    def __init__(
+            self,
+            path_model: str,
+            source,
+            is_mqtt=False,
+            is_serial=False,
+            com_port=None,
+            rect_wh=300,
+            mqtt_user='user',
+            mqtt_pass='pass',
+            mqtt_host='localhost',
+            mqtt_port=1883
+    ) -> None:
         self.model = YOLO(path_model, task='detect')
         self.isSerial = is_serial
         self.isMqtt = is_mqtt
@@ -91,6 +103,10 @@ class HelmetDetection:
             1: 0,
         }
         self.prev = None
+        self.mqtt_user = mqtt_user
+        self.mqtt_pass = mqtt_pass
+        self.mqtt_host = mqtt_host
+        self.mqtt_port = mqtt_port
 
     def detectionRun(self):
         for results in self.model.predict(
@@ -188,8 +204,8 @@ class HelmetDetection:
 
     def mqttInit(self):
         self.cli.tls_set(tls_version=mqtt.ssl.PROTOCOL_TLS)
-        self.cli.username_pw_set('user', password='password')
-        self.cli.connect("host", 8883)
+        self.cli.username_pw_set(self.mqtt_user, password=self.mqtt_pass)
+        self.cli.connect(self.mqtt_host, self.mqtt_port)
 
     def mqttPublish(self, decision: int):
         if decision in self.decision_map:
