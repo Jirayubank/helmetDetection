@@ -13,6 +13,14 @@ parser.add_argument('-isMqtt', '--is_mqtt', required=False,
                     help="Enable mqtt communication", default=False)
 parser.add_argument('-comPort', '--com_port', required=False,
                     help="required if isArduino is Enable", default='COM8')
+parser.add_argument('-user', '--mqtt_user', required=False,
+                    help="setting username for mqtt", default='user')
+parser.add_argument('-mqPass', '--mqtt_pass', required=False,
+                    help="setting password for mqtt", default='pass')
+parser.add_argument('-host', '--mqtt_host', required=False,
+                    help="setting host for mqtt", default='localhost')
+parser.add_argument('-port', '--mqtt_port', required=False,
+                    help="setting port of mqtt host", default=1883)
 
 args = parser.parse_args()
 
@@ -23,6 +31,10 @@ def main():
         source=args.source,
         is_serial=args.is_serial,
         is_mqtt=args.is_mqtt,
+        mqtt_host=args.host,
+        mqtt_port=args.port,
+        mqtt_user=args.user,
+        mqtt_pass=args.mqPass,
         com_port=args.com_port,
         rect_wh=500
     )
