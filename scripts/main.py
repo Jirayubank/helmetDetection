@@ -31,10 +31,10 @@ def main():
         source=args.source,
         is_serial=args.is_serial,
         is_mqtt=args.is_mqtt,
-        mqtt_host=args.host,
-        mqtt_port=args.port,
-        mqtt_user=args.user,
-        mqtt_pass=args.mqPass,
+        mqtt_host=args.mqtt_host,
+        mqtt_port=args.mqtt_port,
+        mqtt_user=args.mqtt_user,
+        mqtt_pass=args.mqtt_pass,
         com_port=args.com_port,
         rect_wh=500
     )
