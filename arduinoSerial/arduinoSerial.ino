@@ -1,7 +1,7 @@
-#define relay1 7
+#define relay1 5
 #define relay2 6
-#define relay3 5
-#define relay4 4
+#define relay3 7
+#define relay4 8
 
 int data;
 
@@ -16,6 +16,7 @@ void setup() {
   digitalWrite(relay2, LOW);
   digitalWrite(relay3, LOW);
   digitalWrite(relay4, LOW);
+  pinMode(LED_BUILTIN, OUTPUT);
   
   Serial.println("Hi!, I am Arduino");
 }
@@ -29,10 +30,12 @@ void loop() {
   if (data == '0') {
     digitalWrite(relay2, HIGH);
     digitalWrite(relay1, LOW);
+    digitalWrite(LED_BUILTIN, HIGH);
   }
   else if (data == '1') {
     digitalWrite(relay2, LOW);
     digitalWrite(relay1, HIGH);
+    digitalWrite(LED_BUILTIN, LOW);
   }
   else if (data == '2') {
     digitalWrite(relay2, LOW);

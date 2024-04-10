@@ -55,13 +55,13 @@ class HelmetDetection:
             path_model: str,
             source,
             is_mqtt=False,
+            mqtt_user='user',
+            mqtt_pass='password',
+            mqtt_host='localhost',
+            mqtt_port=1883,
             is_serial=False,
             com_port=None,
             rect_wh=300,
-            mqtt_user='user',
-            mqtt_pass='pass',
-            mqtt_host='localhost',
-            mqtt_port=1883
     ) -> None:
         self.model = YOLO(path_model, task='detect')
         self.isSerial = is_serial
@@ -72,7 +72,10 @@ class HelmetDetection:
 
         if self.isSerial and com_port is not None:
             self.port = serial.Serial(com_port, 9600)
-
+        self.mqtt_user = mqtt_user
+        self.mqtt_pass = mqtt_pass
+        self.mqtt_host = mqtt_host
+        self.mqtt_port = int(mqtt_port)
         if self.isMqtt:
             self.cli = mqtt.Client()
             self.mqttInit()
@@ -103,10 +106,6 @@ class HelmetDetection:
             1: 0,
         }
         self.prev = None
-        self.mqtt_user = mqtt_user
-        self.mqtt_pass = mqtt_pass
-        self.mqtt_host = mqtt_host
-        self.mqtt_port = mqtt_port
 
     def detectionRun(self):
         for results in self.model.predict(
@@ -203,13 +202,14 @@ class HelmetDetection:
                 break
 
     def mqttInit(self):
-        self.cli.tls_set(tls_version=mqtt.ssl.PROTOCOL_TLS)
-        self.cli.username_pw_set(self.mqtt_user, password=self.mqtt_pass)
-        self.cli.connect(self.mqtt_host, self.mqtt_port)
+        if self.mqtt_host != 'localhost':
+            self.cli.tls_set(tls_version=mqtt.ssl.PROTOCOL_TLS)
+        self.cli.username_pw_set(username='python', password='xKXnhVygbFk47px')
+        self.cli.connect(host=self.mqtt_host, port=self.mqtt_port)
 
     def mqttPublish(self, decision: int):
         if decision in self.decision_map:
-            self.cli.publish("/py", self.decision_map[decision][0])
+            self.cli.publish("control/led", decision)
 
     @staticmethod
     def setColor(hex_color: str):
