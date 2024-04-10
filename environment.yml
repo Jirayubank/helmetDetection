@@ -12,3 +12,5 @@ dependencies:
       - ultralytics==8.0.196
       - opencv-python==4.8.1.78
       - paho-mqtt==1.6.1
+      - onnx==1.15.0
+      - onnx-runtime==1.16.3
