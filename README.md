@@ -29,3 +29,4 @@ For additional information, refer to the following documents:
 - [Yolov8 Docs](https://docs.ultralytics.com): Explore the official YOLOv8 documentation for a deep dive into the underlying model.
 
 Feel free to contribute, report issues, or enhance this project. Your collaboration is valuable in advancing helmet detection technology.
+[model](https://drive.google.com/drive/folders/1NDHVuc2cKWMQyXLmUPFTccJrD-3BKKOs)
